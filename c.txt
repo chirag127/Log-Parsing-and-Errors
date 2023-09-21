@@ -1,0 +1,4 @@
+pip install -r requirements.txt
+
+
+2023-07-30 14:51:58.124  WARN [rdd-async-service,,] 1123492 --- [DiscoveryClient-CacheRefreshExecutor-0] c.n.d.s.t.d.RetryableEurekaHttpClient    : Request execution failed with message: I/O error on GET request for "http://rddgwslas03.prod.cloud.fedex.com:8094/eureka/apps/delta": Connect to rddgwslas03.prod.cloud.fedex.com:8094 [rddgwslas03.prod.cloud.fedex.com/10.228.54.50] failed: Connection refused (Connection refused); nested exception is org.apache.http.conn.HttpHostConnectException: Connect to rddgwslas03.prod.cloud.fedex.com:8094 [rddgwslas03.prod.cloud.fedex.com/10.228.54.50] failed: Connection refused (Connection refused)
