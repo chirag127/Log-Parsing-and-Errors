@@ -58,7 +58,7 @@ if elbow_point is None:
     elbow_point = 1  # Default to 1 cluster if no clear elbow point
 
 # Train the final K-Means model with the determined number of clusters
-n_clusters = 20  # Number of clusters determined by the Elbow Method
+n_clusters = 5  # Number of clusters determined by the Elbow Method
 kmeans = KMeans(n_clusters=n_clusters, random_state=0)
 kmeans.fit(X[:train_size])
 
