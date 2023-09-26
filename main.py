@@ -4,10 +4,6 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.cluster import KMeans
 import re
 
-import pandas as pd
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.cluster import KMeans
-import re
 
 # Load the log data from the CSV file (replace with your own dataset path)
 log_data = pd.read_csv("/workspaces/Log-Parsing-and-Errors/error.csv")
@@ -68,22 +64,6 @@ df = pd.DataFrame(data)
 # Vectorize log messages using TF-IDF
 vectorizer = TfidfVectorizer(max_features=500, stop_words="english")
 log_vectors = vectorizer.fit_transform(df["log_message"])
-
-
-# find the optimal number of clusters
-# from sklearn.metrics import silhouette_score
-
-# # Calculate Silhouette Score for different values of k
-# silhouette_scores = []
-# for k in range(2, 21):  # You can adjust the range as needed
-#     kmeans = KMeans(n_clusters=k, random_state=42)
-#     cluster_labels = kmeans.fit_predict(log_vectors)
-#     silhouette_avg = silhouette_score(log_vectors, cluster_labels)
-#     silhouette_scores.append(silhouette_avg)
-
-
-#     # Find the optimal number of clusters
-# optimal_k = silhouette_scores.index(max(silhouette_scores)) + 2  # +2 because we started from k=2
 
 
 # Calculate WCSS for different values of k
