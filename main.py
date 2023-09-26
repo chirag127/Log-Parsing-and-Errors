@@ -70,7 +70,6 @@ vectorizer = TfidfVectorizer(max_features=500, stop_words="english")
 log_vectors = vectorizer.fit_transform(df["log_message"])
 
 
-
 # find the optimal number of clusters
 # from sklearn.metrics import silhouette_score
 
@@ -167,21 +166,20 @@ def generate_patterns(log_messages, num_patterns=5):
 
     # Iterate through log messages
     for message in log_messages:
-        response = co.generate(
+        response = co.chat(
             model="command-nightly",
-            prompt="Recognize patterns in the following log message:\n\nLog Message: {}\n\nPatterns:".format(
-                message
-            ),
-            max_tokens=300,
-            temperature=0.9,
-            k=0,
-            stop_sequences=[],
-            return_likelihoods="NONE",
+            message=f"Please generate a regex pattern to match the following log message: {message}\n\nonly give regex and nothing else strictly",
+            temperature=0.3,
+            #   chat_history=[{"user_name": "User", "message": f"Please generate a regex pattern to match the following log message: {message}\n\nonly give regex and nothing else strictly"}],
+            prompt_truncation="auto",
+            # stream=True,
+            citation_quality="accurate",
+            connectors=[{"id": "web-search"}],
         )
-
-        print("Prediction: {}".format(response.generations[0].text))
+        # print(response)
+        generated_patterns = response.text
+        print("Prediction: {}".format(generated_patterns))
         # Extract generated patterns from the response
-        generated_patterns = response.generations[0].text
 
         patterns.append({"log_message": message, "patterns": generated_patterns})
 
