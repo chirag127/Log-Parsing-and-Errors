@@ -1,5 +1,6 @@
 import streamlit as st
 import sqlite3
+import re
 
 # Establish a connection to the SQLite database
 conn = sqlite3.connect("error_database.db")
@@ -17,20 +18,17 @@ cursor.execute('''
 ''')
 conn.commit()
 
-# Function to check if the entered error contains any substring (regex) from the database
+# Function to check if the entered error matches any regex
 def check_error(error_text):
     cursor.execute("SELECT * FROM errors")
     rows = cursor.fetchall()
     for row in rows:
-        if row[2] in error_text:
+        if re.search(row[2], error_text):
             return (True, row[3], row[4])
     return (False, None, None)
 
 # Streamlit app
 st.title("Error Handler")
-
-# Create a unique session state object
-session_state = st.session_state
 
 # User input for error
 user_error = st.text_area("Enter your error message:")
@@ -45,26 +43,18 @@ if st.button("Check Error"):
         st.error("This is a new error.")
         st.write("You can add this error to the database below:")
 
-        # Create a form with four widgets
-        with st.form(key="add_error_form"):
-            new_error_name = st.text_input("Error Name:")
-            new_error_regex = st.text_input("Error Regex (in a more generalized form):")
-            new_error_reason = st.text_area("Error Reason:")
-            new_error_solution = st.text_area("Error Solution:")
-            # Create a submit button for the form
-            submitted = st.form_submit_button(label="Add Error to Database")
+        # Allow the user to add the error to the database
+        new_error_name = st.text_input("Error Name:")
+        
+        # Use a unique key for text_input to avoid unnecessary reruns
+        new_error_regex = st.text_input("Error Regex (in a more generalized form):", key="error_regex")
+        
+        new_error_reason = st.text_area("Error Reason:")
+        new_error_solution = st.text_area("Error Solution:")
 
-        if submitted:
-            # Add the error to the database
+        if st.button("Add Error to Database"):
             cursor.execute("INSERT INTO errors (name, regex, reason, solution) VALUES (?, ?, ?, ?)",
                            (new_error_name, new_error_regex, new_error_reason, new_error_solution))
             conn.commit()
             st.success("Error added to the database.")
             st.text("Refresh the page to check the newly added error.")
-
-        # Store the form state in session_state
-        session_state.submitted = submitted
-
-# Use session_state to preserve the form state between reloads
-if hasattr(session_state, "submitted") and session_state.submitted:
-    st.form_submit_button("")
