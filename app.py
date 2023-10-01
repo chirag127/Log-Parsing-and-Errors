@@ -77,7 +77,7 @@ if st.button("Check Error"):
 
 # Preserve widget states in session_state
 st.session_state.user_error = user_error
-st.session_state.new_error_name = new_error_name
+st.session_state.new_error_name = new_error_name  # Initialize new_error_name
 st.session_state.new_error_regex = new_error_regex
 st.session_state.new_error_reason = new_error_reason
 st.session_state.new_error_solution = new_error_solution
