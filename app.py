@@ -30,8 +30,24 @@ def check_error(error_text):
 # Streamlit app
 st.title("Error Handler")
 
+# Use st.session_state to preserve widget states
+if "user_error" not in st.session_state:
+    st.session_state.user_error = ""
+
+if "new_error_name" not in st.session_state:
+    st.session_state.new_error_name = ""
+
+if "new_error_regex" not in st.session_state:
+    st.session_state.new_error_regex = ""
+
+if "new_error_reason" not in st.session_state:
+    st.session_state.new_error_reason = ""
+
+if "new_error_solution" not in st.session_state:
+    st.session_state.new_error_solution = ""
+
 # User input for error
-user_error = st.text_area("Enter your error message:")
+user_error = st.text_area("Enter your error message:", st.session_state.user_error)
 
 if st.button("Check Error"):
     is_known, reason, solution = check_error(user_error)
@@ -44,13 +60,13 @@ if st.button("Check Error"):
         st.write("You can add this error to the database below:")
 
         # Allow the user to add the error to the database
-        new_error_name = st.text_input("Error Name:")
+        new_error_name = st.text_input("Error Name:", st.session_state.new_error_name)
         
         # Use a unique key for text_input to avoid unnecessary reruns
-        new_error_regex = st.text_input("Error Regex (in a more generalized form):", key="error_regex")
+        new_error_regex = st.text_input("Error Regex (in a more generalized form):", st.session_state.new_error_regex, key="error_regex")
         
-        new_error_reason = st.text_area("Error Reason:")
-        new_error_solution = st.text_area("Error Solution:")
+        new_error_reason = st.text_area("Error Reason:", st.session_state.new_error_reason)
+        new_error_solution = st.text_area("Error Solution:", st.session_state.new_error_solution)
 
         if st.button("Add Error to Database"):
             cursor.execute("INSERT INTO errors (name, regex, reason, solution) VALUES (?, ?, ?, ?)",
@@ -58,3 +74,10 @@ if st.button("Check Error"):
             conn.commit()
             st.success("Error added to the database.")
             st.text("Refresh the page to check the newly added error.")
+
+# Preserve widget states in session_state
+st.session_state.user_error = user_error
+st.session_state.new_error_name = new_error_name
+st.session_state.new_error_regex = new_error_regex
+st.session_state.new_error_reason = new_error_reason
+st.session_state.new_error_solution = new_error_solution
