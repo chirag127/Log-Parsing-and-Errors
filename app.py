@@ -31,11 +31,9 @@ def check_error(error_text):
 st.title("Error Handler")
 
 # User input for error
-with st.form(key='error_form'):
-    user_error = st.text_area("Enter your error message:")
-    submit_button = st.form_submit_button("Check Error")
+user_error = st.text_area("Enter your error message:")
 
-if submit_button:
+if st.button("Check Error"):
     is_known, reason, solution = check_error(user_error)
     if is_known:
         st.success("This is a known error.")
@@ -45,15 +43,24 @@ if submit_button:
         st.error("This is a new error.")
         st.write("You can add this error to the database below:")
 
-        # Allow the user to add the error to the database
-        with st.form(key='add_error_form'):
-            new_error_name = st.text_input("Error Name:")
-            new_error_regex = st.text_input("Error Regex (in a more generalized form):")
-            new_error_reason = st.text_area("Error Reason:")
-            new_error_solution = st.text_area("Error Solution:")
-            add_error_button = st.form_submit_button("Add Error to Database")
+        # Initialize the values in session state
+        if "new_error_name" not in st.session_state:
+            st.session_state.new_error_name = ""
+        if "new_error_regex" not in st.session_state:
+            st.session_state.new_error_regex = ""
+        if "new_error_reason" not in st.session_state:
+            st.session_state.new_error_reason = ""
+        if "new_error_solution" not in st.session_state:
+            st.session_state.new_error_solution = ""
 
-        if add_error_button:
+        # Use session state to store and access the values of the widgets
+        new_error_name = st.text_input("Error Name:", value=st.session_state.new_error_name, on_change=st.session_state.update, args=("new_error_name",))
+        new_error_regex = st.text_input("Error Regex (in a more generalized form):", value=st.session_state.new_error_regex, on_change=st.session_state.update, args=("new_error_regex",))
+        new_error_reason = st.text_area("Error Reason:", value=st.session_state.new_error_reason, on_change=st.session_state.update, args=("new_error_reason",))
+        new_error_solution = st.text_area("Error Solution:", value=st.session_state.new_error_solution, on_change=st.session_state.update, args=("new_error_solution",))
+
+        if st.button("Add Error to Database"):
+            # Add the error to the database
             cursor.execute("INSERT INTO errors (name, regex, reason, solution) VALUES (?, ?, ?, ?)",
                            (new_error_name, new_error_regex, new_error_reason, new_error_solution))
             conn.commit()
