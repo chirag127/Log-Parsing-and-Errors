@@ -1,25 +1,10 @@
+exception processing errorpage\[errorcode=\d+, location=/[^\]]+\]
+servlet\.service\(\) for servlet \[[^\]]+\] in context with path \[[^\]]*\] threw exception
+request execution failed with message: i/o error on (put|get) request for "": connect to [^ ]+ failed(: [^;]+)?
+a cookie header was received \[\$\{[^}]+\}\] that contained an invalid cookie\. that cookie will be ignored\.
+request execution failed with message: i/o error on (put|get) request for "": connect to [^ ]+ failed(: [^;]+)?
 
-Cluster number: 1
-```
-Pattern: exception processing errorpage\[errorcode=\d+, location=/[^\]]+\]
-```
 
-Cluster number: 2
-```
-Pattern: servlet\.service\(\) for servlet \[[^\]]+\] in context with path \[[^\]]*\] threw exception
-```
+model
 
-Cluster number: 3
-```
-Pattern: request execution failed with message: i/o error on (put|get) request for "": connect to [^ ]+ failed(: [^;]+)?
-```
-
-Cluster number: 4
-```
-Pattern: a cookie header was received \[\$\{[^}]+\}\] that contained an invalid cookie\. that cookie will be ignored\.
-```
-
-Cluster number: 5
-```
-Pattern: request execution failed with message: i/o error on (put|get) request for "": connect to [^ ]+ failed(: [^;]+)?
-```
+error no. | regex | solution | comment
