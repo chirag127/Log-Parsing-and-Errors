@@ -28,7 +28,7 @@ def check_error(error_text):
     return (False, None, None)
 
 # Streamlit app
-st.title("Error Handler")
+st.title("ErrorHandler")
 
 # User input for error
 user_error = st.text_area("Enter your error message:")
@@ -43,13 +43,17 @@ if st.button("Check Error"):
         st.error("This is a new error.")
         st.write("You can add this error to the database below:")
 
-        # Allow the user to add the error to the database
-        new_error_name = st.text_input("Error Name:")
-        new_error_regex = st.text_input("Error Regex (in a more generalized form):")
-        new_error_reason = st.text_area("Error Reason:")
-        new_error_solution = st.text_area("Error Solution:")
+        # Create a form with four widgets
+        with st.form(key="add_error_form"):
+            new_error_name = st.text_input("Error Name:")
+            new_error_regex = st.text_input("Error Regex (in a more generalized form):")
+            new_error_reason = st.text_area("Error Reason:")
+            new_error_solution = st.text_area("Error Solution:")
+            # Create a submit button for the form
+            submitted = st.form_submit_button(label="Add Error to Database")
 
-        if st.button("Add Error to Database"):
+        if submitted:
+            # Add the error to the database
             cursor.execute("INSERT INTO errors (name, regex, reason, solution) VALUES (?, ?, ?, ?)",
                            (new_error_name, new_error_regex, new_error_reason, new_error_solution))
             conn.commit()
