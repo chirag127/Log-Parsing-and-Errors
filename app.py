@@ -51,11 +51,14 @@ if submit_button:
             new_error_regex = st.text_input("Error Regex (in a more generalized form):")
             new_error_reason = st.text_area("Error Reason:")
             new_error_solution = st.text_area("Error Solution:")
-            add_error_button = st.form_submit_button("Add Error to Database")
 
-        if add_error_button:
-            cursor.execute("INSERT INTO errors (name, regex, reason, solution) VALUES (?, ?, ?, ?)",
+            # Define a callback function for adding the error to the database
+            def add_error():
+                cursor.execute("INSERT INTO errors (name, regex, reason, solution) VALUES (?, ?, ?, ?)",
                            (new_error_name, new_error_regex, new_error_reason, new_error_solution))
-            conn.commit()
-            st.success("Error added to the database.")
-            st.text("Refresh the page to check the newly added error.")
+                conn.commit()
+                st.success("Error added to the database.")
+                st.text("Refresh the page to check the newly added error.")
+
+            # Use st.button with on_click argument instead of st.form_submit_button
+            add_error_button = st.button("Add Error to Database", on_click=add_error)
