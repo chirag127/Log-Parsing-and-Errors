@@ -1,7 +1,9 @@
 import pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.cluster import KMeans
+from sklearn.metrics import silhouette_score
 import re
 
 
@@ -66,24 +68,57 @@ vectorizer = TfidfVectorizer(max_features=500, stop_words="english")
 log_vectors = vectorizer.fit_transform(df["log_message"])
 
 
-# Calculate WCSS for different values of k
-# wcss = []
-# for k in range(1, 21):  # You can adjust the range as needed
-#     kmeans = KMeans(n_clusters=k, random_state=42)
+
+# k_range = range(1, 20)
+
+
+# sse = []
+
+
+# for k in k_range:
+#     kmeans = KMeans(n_clusters=k)
 #     kmeans.fit(log_vectors)
-#     wcss.append(kmeans.inertia_)
+#     sse.append(kmeans.inertia_)
 
-# # Find the optimal number of clusters (k)
-# optimal_k = None
-# for i in range(1, len(wcss)):
-#     slope = (wcss[i] - wcss[i - 1]) / 2  # Calculate the slope of the WCSS curve
-#     if slope < 100:  # You can adjust this threshold based on your data
-#         optimal_k = i + 1  # +1 because we started from k=1
-#         break
 
+# plt.figure(figsize=(8, 6))
+# plt.plot(k_range, sse, marker='o', linestyle='-')
+# plt.xlabel('Number of Clusters (K)')
+# plt.ylabel('Sum of Squared Distances')
+# plt.title('Elbow Method for Optimal K')
+# plt.grid(True)
+# plt.show()
+
+
+
+# # Initialize an empty list to store the silhouette scores
+# silhouette_scores = []
+
+# # Iterate through each value of K
+# for k in k_range:
+#     kmeans = KMeans(n_clusters=k)
+#     kmeans.fit(log_vectors)
+
+#     # Check if the number of unique labels is less than 2
+#     if len(np.unique(kmeans.labels_)) < 2:
+#         silhouette_avg = -1  # Set a placeholder score (e.g., -1) for such cases
+#     else:
+#         labels = kmeans.labels_
+#         silhouette_avg = silhouette_score(log_vectors, labels)
+
+#     silhouette_scores.append(silhouette_avg)
+
+# # Plot the Silhouette Score graph
+# plt.figure(figsize=(8, 6))
+# plt.plot(k_range, silhouette_scores, marker='o', linestyle='-')
+# plt.xlabel('Number of Clusters (K)')
+# plt.ylabel('Silhouette Score')
+# plt.title('Silhouette Score for Optimal K')
+# plt.grid(True)
+# plt.show()
 
 # Train a K-Means clustering model
-n_clusters = 5  # You can adjust the number of clusters as needed
+n_clusters = 7  # You can adjust the number of clusters as needed
 kmeans = KMeans(n_clusters=n_clusters)
 kmeans.fit(log_vectors)
 
@@ -166,10 +201,10 @@ def generate_patterns(log_messages, num_patterns=5):
     return patterns
 
 
-# Generate patterns for each cluster
-cluster_patterns = generate_patterns(cluster_messages)
+# # Generate patterns for each cluster
+# cluster_patterns = generate_patterns(cluster_messages)
 
-# Print the identified patterns (top keywords for each cluster)
-print("Identified Patterns:")
-for cluster_id, patterns in enumerate(cluster_patterns):
-    print(f"Pattern {cluster_id + 1}: {patterns['patterns']}")
+# # Print the identified patterns (top keywords for each cluster)
+# print("Identified Patterns:")
+# for cluster_id, patterns in enumerate(cluster_patterns):
+#     print(f"Pattern {cluster_id + 1}: {patterns['patterns']}")
