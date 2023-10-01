@@ -1,6 +1,5 @@
 import streamlit as st
 import sqlite3
-import re
 
 # Establish a connection to the SQLite database
 conn = sqlite3.connect("error_database.db")
@@ -18,17 +17,20 @@ cursor.execute('''
 ''')
 conn.commit()
 
-# Function to check if the entered error matches any regex
+# Function to check if the entered error contains any substring (regex) from the database
 def check_error(error_text):
     cursor.execute("SELECT * FROM errors")
     rows = cursor.fetchall()
     for row in rows:
-        if re.search(row[2], error_text):
+        if row[2] in error_text:
             return (True, row[3], row[4])
     return (False, None, None)
 
 # Streamlit app
-st.title("ErrorHandler")
+st.title("Error Handler")
+
+# Create a unique session state object
+session_state = st.session_state
 
 # User input for error
 user_error = st.text_area("Enter your error message:")
@@ -59,3 +61,10 @@ if st.button("Check Error"):
             conn.commit()
             st.success("Error added to the database.")
             st.text("Refresh the page to check the newly added error.")
+
+        # Store the form state in session_state
+        session_state.submitted = submitted
+
+# Use session_state to preserve the form state between reloads
+if hasattr(session_state, "submitted") and session_state.submitted:
+    st.form_submit_button("")
