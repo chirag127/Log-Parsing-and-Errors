@@ -45,20 +45,29 @@ if submit_button:
         st.error("This is a new error.")
         st.write("You can add this error to the database below:")
 
-        # Allow the user to add the error to the database
-        with st.form(key='add_error_form'):
-            new_error_name = st.text_input("Error Name:")
-            new_error_regex = st.text_input("Error Regex (in a more generalized form):")
-            new_error_reason = st.text_area("Error Reason:")
-            new_error_solution = st.text_area("Error Solution:")
-
-            # Define a callback function for adding the error to the database
-            def add_error():
+        # Define a callback function for updating the output
+        def update_output():
+            # Clear the previous output
+            output.empty()
+            # Check if all the inputs are filled
+            if new_error_name and new_error_regex and new_error_reason and new_error_solution:
+                # Add the error to the database
                 cursor.execute("INSERT INTO errors (name, regex, reason, solution) VALUES (?, ?, ?, ?)",
                            (new_error_name, new_error_regex, new_error_reason, new_error_solution))
                 conn.commit()
-                st.success("Error added to the database.")
-                st.text("Refresh the page to check the newly added error.")
+                # Display a success message
+                output.success("Error added to the database.")
+                output.text("Refresh the page to check the newly added error.")
+            else:
+                # Display an error message
+                output.error("Please fill all the inputs.")
 
-            # Use st.button with on_click argument instead of st.form_submit_button
-            add_error_button = st.button("Add Error to Database", on_click=add_error)
+        # Allow the user to add the error to the database
+        with st.form(key='add_error_form'):
+            # Create input widgets with on_change parameter
+            new_error_name = st.text_input("Error Name:", on_change=update_output)
+            new_error_regex = st.text_input("Error Regex (in a more generalized form):", on_change=update_output)
+            new_error_reason = st.text_area("Error Reason:", on_change=update_output)
+            new_error_solution = st.text_area("Error Solution:", on_change=update_output)
+            # Create an empty placeholder for the output
+            output = st.empty()
