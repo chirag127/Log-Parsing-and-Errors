@@ -1,44 +1,15 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
-    <title>Error Handler</title>
+    <title>Error Message Analyzer</title>
 </head>
 <body>
-    <div class="container">
-        <h1>Error Handler</h1>
-
-        <!-- Error Input Form -->
-        <form method="POST">
-            <div class="error-form">
-                <h2>Check Error</h2>
-                <textarea name="user_error" placeholder="Enter your error message"></textarea>
-                <button type="submit">Check Error</button>
-            </div>
-        </form>
-
-        <!-- Error Details -->
-        {% if is_known %}
-            <div class="error-details">
-                <h3>Error Details</h3>
-                <p>Reason: {{ reason }}</p>
-                <p>Solution: {{ solution }}</p>
-            </div>
-        {% elif is_known == false and is_known is not none %}
-            <div class="error-details">
-                <p class="error-message">This is a new error.</p>
-                <h2>Add Error to Database</h2>
-                <form method="POST" action="/add_error">
-                    <input type="text" name="error_name" placeholder="Error Name" required>
-                    <input type="text" name="error_regex" placeholder="Error Regex (generalized)" required>
-                    <textarea name="error_reason" placeholder="Error Reason" required></textarea>
-                    <textarea name="error_solution" placeholder="Error Solution" required></textarea>
-                    <button type="submit">Add Error</button>
-                </form>
-            </div>
-        {% endif %}
-    </div>
+    <h1>Error Message Analyzer</h1>
+    <form method="POST" action="/">
+        <label for="user_input">Enter your error message:</label>
+        <textarea name="user_input" id="user_input" rows="4" cols="50" required></textarea>
+        <br>
+        <button type="submit">Analyze</button>
+    </form>
 </body>
 </html>

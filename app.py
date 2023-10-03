@@ -1,14 +1,14 @@
-import streamlit as st
+from flask import Flask, render_template, request, redirect, url_for
 import pandas as pd
 import re
 
-# Create a cache for the database to avoid reloading on every interaction
-@st.cache(allow_output_mutation=True)
-def load_data(database_path):
-    # Load the CSV database containing known error patterns, regex patterns, and solutions
-    return pd.read_csv(database_path)
+app = Flask(__name__)
 
-def check_known_errors(user_input, df):
+# Load the CSV database containing known error patterns, regex patterns, and solutions
+database_path = "cluster_error_data.csv"
+df = pd.read_csv(database_path)
+
+def check_known_errors(user_input):
     # Check if the user input matches known error patterns using regex
     matched_errors = []
     for index, row in df.iterrows():
@@ -17,59 +17,33 @@ def check_known_errors(user_input, df):
             matched_errors.append(row["Error Solution"])
     return matched_errors
 
-def add_new_error(user_input, solution, database_path):
+def add_new_error(user_input, solution):
     # Implement the logic to add the new error and its solution to the database here
     # Update the CSV file with the new entry
     new_entry = {"Error Regex": user_input, "Error Solution": solution}
-    df = pd.read_csv(database_path)
+    global df
     df = pd.concat([df, pd.DataFrame([new_entry])], ignore_index=True)
     df.to_csv(database_path, index=False)
-    return df
 
-def main():
-    # Streamlit app
-    st.set_page_config(
-        page_title="Error Message Analyzer",
-        page_icon="🚀",
-    )
+@app.route("/", methods=["GET", "POST"])
+def home():
+    if request.method == "POST":
+        user_input = request.form["user_input"]
+        matched_errors = check_known_errors(user_input)
 
-    # Containers
-    top = st.container()
-    output = st.empty()
+        if matched_errors:
+            return render_template("result.html", matched_errors=matched_errors)
+        else:
+            return render_template("add_error.html", user_input=user_input)
 
-    # Load the CSV database containing known error patterns, regex patterns, and solutions
-    database_path = "cluster_error_data.csv"
-    df = load_data(database_path)
+    return render_template("index.html")
 
-    # User input for error message
-    with top:
-        st.title("Error Message Analyzer")
-
-        user_input = st.text_area("Enter your error message:", height=100, max_chars=5000)
-
-        if user_input:
-            matched_errors = check_known_errors(user_input, df)
-
-            if matched_errors:
-                st.header("Known Error Detected")
-                for error_solution in matched_errors:
-                    st.write(error_solution)
-            else:
-                st.header("New Error Detected")
-                st.write("This error is not in the database. Would you like to add it?")
-
-                # Option to add the new error and its solution
-                user_input = st.text_input("Error Regex (Edit if necessary):", )
-                solution = st.text_input("Error Solution (Provide a solution for the error):", )
-
-                if st.button("Add Error"):
-                    if user_input:
-                        df = add_new_error(user_input, solution, database_path)
-                        st.success("New error added to the database.")
-
-    # Add a reload button to prevent unnecessary reloads
-    if st.button("Reload"):
-        st.experimental_rerun()
+@app.route("/add_error", methods=["POST"])
+def add_error():
+    user_input = request.form["user_input"]
+    solution = request.form["solution"]
+    add_new_error(user_input, solution)
+    return redirect(url_for("home"))
 
 if __name__ == "__main__":
-    main()
+    app.run(debug=True)

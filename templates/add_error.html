@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Add New Error</title>
+</head>
+<body>
+    <h1>Add New Error</h1>
+    <h2>New Error Detected</h2>
+    <p>This error is not in the database. You can add it below.</p>
+    <form method="POST" action="/add_error">
+        <label for="user_input">Error Regex (Edit if necessary):</label>
+        <textarea name="user_input" id="user_input" rows="4" cols="50" required>{{ user_input }}</textarea>
+        <br>
+        <label for="solution">Error Solution (Provide a solution for the error):</label>
+        <textarea name="solution" id="solution" rows="4" cols="50" required></textarea>
+        <br>
+        <button type="submit">Add Error</button>
+    </form>
+    <a href="/">Back to Home</a>
+</body>
+</html>

