@@ -1,6 +1,7 @@
 import streamlit as st
 from pymongo import MongoClient
 import re
+from ap import get_chatgpt_answer
 
 # Access MongoDB connection details from Streamlit secrets
 db_uri = st.secrets["db_uri"]
@@ -14,14 +15,14 @@ dblist = client.list_database_names()
 print("the list of databases are: ", dblist)
 
 if db_database in dblist:
-  print("The database exists.")
+    print("The database exists.")
 
-  db = client[db_database]  # Connect to the specified database
+    db = client[db_database]  # Connect to the specified database
 
 else:
-  print("The database does not exist.")
+    print("The database does not exist.")
 
-  db = client[db_database]  # Connect to the specified database
+    db = client[db_database]  # Connect to the specified database
 
 
 # Ensure the collection exists, create it if it doesn't
@@ -30,7 +31,6 @@ if collection_name not in db.list_collection_names():
     db.create_collection(collection_name)
 
 collection = db[collection_name]
-
 
 
 def check_known_errors(user_input):
@@ -42,6 +42,7 @@ def check_known_errors(user_input):
             matched_errors.append(error_doc["ErrorSolution"])
     return matched_errors
 
+
 def add_new_error(user_input, solution):
     # Insert a new document into the MongoDB collection
     error_doc = {"ErrorRegex": user_input, "ErrorSolution": solution}
@@ -52,7 +53,6 @@ def if_submit_button_clicked(new_error_input, new_error_solution):
     if new_error_input and new_error_solution:
         add_new_error(new_error_input, new_error_solution)
         st.success("New error added to the database!")
-
 
 
 def main():
@@ -80,35 +80,77 @@ def main():
             matched_errors = check_known_errors(st.session_state.user_input)
             if matched_errors:
                 st.success("Known Error Detected")
-                for error_solution , i in zip(matched_errors, range(len(matched_errors))):
-
+                for error_solution, i in zip(
+                    matched_errors, range(len(matched_errors))
+                ):
                     # Display the error solution in a good format
-                    st.write(f"Solution {i+1}:" , error_solution)
+                    st.write(f"Solution {i+1}:", error_solution)
             else:
                 st.header("New Error Detected")
                 st.write("This error is not in the database. Would you like to add it?")
+
+                # # get the answer from chatgpt
+                # answer = get_chatgpt_answer("please suggest a regex and a solution for this error: " + st.session_state.user_input)
+
+                # # Display the answer
+                # st.write("suggested regex and solution: " + answer)
+
+                # add a spinner while waiting for the answer
+                with st.spinner(
+                    "Please wait while we suggest a regex and a solution for this error ..."
+                ):
+                    if "chatgpt_answer" not in st.session_state:
+                        st.session_state.chatgpt_answer = ""
+                        # get the answer from chatgpt
+                        answer = get_chatgpt_answer(
+                            f"""please suggest a regex and a solution for this error: {st.session_state.user_input}
+just provide the two values in the following format:
+Regex: <regex>
+
+Solution: <solution>"""
+                        )
+                        st.session_state.chatgpt_answer = answer
+
+                    # Display the answer
+                    # st.write("suggested regex and solution: " + answer)
+
+                    print("suggested regex and solution: " + st.session_state.chatgpt_answer )
 
                 if "new_error_input" not in st.session_state:
                     st.session_state.new_error_input = ""
                 if "new_error_solution" not in st.session_state:
                     st.session_state.new_error_solution = ""
 
+                # try: to extract the regex and solution from the answer
 
+                try:
+                    regex = re.search(
+                        r"Regex: (.*)\n", st.session_state.chatgpt_answer
+                    ).group(1)
+                    solution = re.search(
+                        r"Solution: (.*)\n", st.session_state.chatgpt_answer
+                    ).group(1)
+
+                    # remove the code block from the regex from the start and end if exists
+                    regex = re.sub(r"`", "", regex)
+
+                    st.session_state.new_error_input = regex
+                    st.session_state.new_error_solution = solution
+                except:
+                    pass
 
                 new_error_input = st.text_input(
                     "Error Regex (Edit if necessary):",
-                    st.session_state.user_input,
                     key="new_error_input",
                 )
                 new_error_solution = st.text_input(
                     "Error Solution (Provide a solution for the error):",
-                    st.session_state.new_error_solution,
                     key="new_error_solution",
                 )
+
                 if st.button("Submit"):
-                    if_submit_button_clicked(
-                        new_error_input, new_error_solution
-                    )
+                    if_submit_button_clicked(new_error_input, new_error_solution)
+
 
 if __name__ == "__main__":
     main()
