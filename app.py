@@ -3,13 +3,7 @@ from pymongo import MongoClient
 import re
 from poe_api_wrapper import PoeApi
 
-client = PoeApi("SkSETIfxASyu3DtxwlkdnA==")
 
-
-def get_chatgpt_answer(question):
-    for chunk in client.send_message("chinchilla", question):
-        pass
-    return chunk["text"]
 
 
 
@@ -42,6 +36,14 @@ if collection_name not in db.list_collection_names():
 
 collection = db[collection_name]
 
+
+Poeclient = PoeApi("SkSETIfxASyu3DtxwlkdnA==")
+
+
+def get_chatgpt_answer(question):
+    for chunk in Poeclient.send_message("chinchilla", question):
+        pass
+    return chunk["text"]
 
 def check_known_errors(user_input):
     # Check if the regex pattern matches any document in the MongoDB collection
