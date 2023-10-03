@@ -1,4 +1,4 @@
-nltk
+pymongo
 streamlit
 pandas
 regex
