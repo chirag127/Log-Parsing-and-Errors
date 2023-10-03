@@ -53,6 +53,8 @@ def if_submit_button_clicked(new_error_input, new_error_solution):
         add_new_error(new_error_input, new_error_solution)
         st.success("New error added to the database!")
 
+
+
 def main():
     # Streamlit app
     st.set_page_config(
@@ -90,6 +92,8 @@ def main():
                     st.session_state.new_error_input = ""
                 if "new_error_solution" not in st.session_state:
                     st.session_state.new_error_solution = ""
+
+
 
                 new_error_input = st.text_input(
                     "Error Regex (Edit if necessary):",
