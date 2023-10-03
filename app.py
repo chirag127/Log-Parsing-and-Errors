@@ -1,7 +1,17 @@
 import streamlit as st
 from pymongo import MongoClient
 import re
-from ap import get_chatgpt_answer
+from poe_api_wrapper import PoeApi
+
+client = PoeApi("SkSETIfxASyu3DtxwlkdnA==")
+
+
+def get_chatgpt_answer(question):
+    for chunk in client.send_message("chinchilla", question):
+        pass
+    return chunk["text"]
+
+
 
 # Access MongoDB connection details from Streamlit secrets
 db_uri = st.secrets["db_uri"]
