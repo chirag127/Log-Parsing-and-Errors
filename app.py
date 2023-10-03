@@ -1,29 +1,16 @@
 import streamlit as st
 from pymongo import MongoClient
 import re
-import tomli
 
 # Access MongoDB connection details from Streamlit secrets
 db_uri = st.secrets["db_uri"]
 db_database = st.secrets["db_database"]
 db_collection = st.secrets["db_collection"]
 
-# # Connect to MongoDB using configuration
-# client = MongoClient(config["mongodb"]["uri"])
-# db = client[config["mongodb"]["database"]]  # Connect to the specified database
-
-# # Ensure the collection exists, create it if it doesn't
-# collection_name = config["mongodb"]["collection"]
-# if collection_name not in db.list_collection_names():
-#     db.create_collection(collection_name)
-
-# collection = db[collection_name]
-
-# Connect to MongoDB using secrets
 client = MongoClient(db_uri)
 
 
-dblist = myclient.list_database_names()
+dblist = client.list_database_names()
 print("the list of databases are: ", dblist)
 
 if db_database in dblist:
