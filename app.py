@@ -1,7 +1,11 @@
 import streamlit as st
 from pymongo import MongoClient
 import re
-from ap import get_chatgpt_answer
+from poe_api_wrapper import PoeApi
+
+
+
+
 from streamlit_extras.app_logo import add_logo
 
 def logo():
@@ -35,6 +39,14 @@ if collection_name not in db.list_collection_names():
 
 collection = db[collection_name]
 
+
+Poeclient = PoeApi("SkSETIfxASyu3DtxwlkdnA==")
+
+
+def get_chatgpt_answer(question):
+    for chunk in Poeclient.send_message("chinchilla", question):
+        pass
+    return chunk["text"]
 
 def check_known_errors(user_input):
     # Check if the regex pattern matches any document in the MongoDB collection
