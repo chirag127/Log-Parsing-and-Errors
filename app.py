@@ -4,6 +4,25 @@ import re
 from poe_api_wrapper import PoeApi
 from streamlit_extras.app_logo import add_logo
 
+client = PoeApi("SkSETIfxASyu3DtxwlkdnA==")
+
+
+def get_chatgpt_answer(question):
+    # bot_list = ["chinchilla", "gpt3_5","chinchilla_instruct", "capybara","acouchy","llama_2_7b_chat","llama_2_13b_chat","llama_2_70b_chat","code_llama_7b_instruct","code_llama_13b_instruct","code_llama_34b_instruct","upstage_solar_0_70b_16bit"]
+
+    bot_list = ["chinchilla", "gpt3_5","chinchilla_instruct", "capybara"]
+    for bot in bot_list:
+
+        try:
+            for chunk in client.send_message(bot, question):
+                pass
+            return chunk["text"]
+        except Exception as e:
+            print(e)
+            # raise e
+
+    return "Sorry, I am not able to make automated responses at this time. Please try again later."
+
 def logo():
     add_logo("https://lh3.googleusercontent.com/YtXTsa-6SaaMl02-OUo8iRztlX5Thu4aCLavunIV1M5hm9y4ySTPpMjpY44fL4ayz7Se", height=300)
 # Access MongoDB connection details from Streamlit secrets
@@ -35,14 +54,6 @@ if collection_name not in db.list_collection_names():
 
 collection = db[collection_name]
 
-
-Poeclient = PoeApi("SkSETIfxASyu3DtxwlkdnA==")
-
-
-def get_chatgpt_answer(question):
-    for chunk in Poeclient.send_message("chinchilla", question):
-        pass
-    return chunk["text"]
 
 def check_known_errors(user_input):
     # Check if the regex pattern matches any document in the MongoDB collection
@@ -119,19 +130,34 @@ def main():
                     if "chatgpt_answer" not in st.session_state:
                         st.session_state.chatgpt_answer = ""
                         # get the answer from chatgpt
-                        answer = get_chatgpt_answer(
-                            f"""please suggest a regex and a solution for this error: {st.session_state.user_input}
+
+                        try:
+
+                            answer = get_chatgpt_answer(
+                            f"""please suggest a regex for the following error and a brief solution to solve the following error:
+
+{st.session_state.user_input}
+
 just provide the two values in the following format:
 Regex: <regex>
 
-Solution: <solution>"""
+Solution: <solution>
+
+
+don't provide any other information in the message, just the regex and the solution. Thank you!"""
                         )
-                        st.session_state.chatgpt_answer = answer
+                            st.session_state.chatgpt_answer = answer
+                            # print("suggested regex and solution: \n " + st.session_state.chatgpt_answer )
+                        except Exception as e:
+
+                            print("error" + str(e))
+
+                            st.write("Error in auto-suggesting a regex and a solution for this error. Please provide a regex and a solution manually.")
 
                     # Display the answer
                     # st.write("suggested regex and solution: " + answer)
 
-                    print("suggested regex and solution: " + st.session_state.chatgpt_answer )
+
 
                 if "new_error_input" not in st.session_state:
                     st.session_state.new_error_input = ""
@@ -142,7 +168,7 @@ Solution: <solution>"""
 
                 try:
                     regex = re.search(
-                        r"Regex: (.*)\n", st.session_state.chatgpt_answer
+                        r"Regex:(.*)\n", st.session_state.chatgpt_answer
                     ).group(1)
                     solution = re.search(
                         r"Solution: (.*)\n", st.session_state.chatgpt_answer
@@ -153,8 +179,18 @@ Solution: <solution>"""
 
                     st.session_state.new_error_input = regex
                     st.session_state.new_error_solution = solution
-                except:
-                    pass
+                except Exception as e:
+                    print("error" + str(e))
+
+                    # print("the chatgpt answer is: ", st.session_state.chatgpt_answer)
+
+                    # st.write("Error in auto-suggesting a regex and a solution for this error. Please provide a regex and a solution manually.")
+
+                    if len(st.session_state.chatgpt_answer) > 0:
+                        st.write("suggested regex and solution: \n " + st.session_state.chatgpt_answer)
+
+
+                    # print("error in extracting the regex and solution from the answer")
 
                 new_error_input = st.text_input(
                     "Error Regex (Edit if necessary):",
