@@ -1,10 +1,17 @@
 import streamlit as st
 from pymongo import MongoClient
 import re
-from poe_api_wrapper import PoeApi
 from streamlit_extras.app_logo import add_logo
+from poe_api_wrapper import PoeApi
 
-client = PoeApi("SkSETIfxASyu3DtxwlkdnA==")
+
+try:
+
+    POeclient = PoeApi("CN6Yyu36OUZAxL1N-ytjvg==")
+
+except Exception as e:
+    print(e)
+    print("error in connecting to POe")
 
 
 def get_chatgpt_answer(question):
@@ -14,14 +21,69 @@ def get_chatgpt_answer(question):
     for bot in bot_list:
 
         try:
-            for chunk in client.send_message(bot, question):
+            for chunk in POeclient.send_message(bot, question):
                 pass
             return chunk["text"]
         except Exception as e:
             print(e)
             # raise e
 
-    return "Sorry, I am not able to make automated responses at this time. Please try again later."
+    return get_cohere_answer(question)
+import cohere
+co = cohere.Client('PQ50WPjjMsFSzUhZlMQaGTlS30MyRs9YkbuKfhHh') # This is your trial API key
+
+def get_cohere_answer(question):
+    response = co.generate(
+  model='command-nightly',
+  prompt="""
+Error Example: a cookie header was received [${jndi:ldap://log4shell-generic-8molyf0ab2aqtscsyugh${lower:ten}.w.nessus.org/nessus}=${jndi:ldap://log4shell-generic-8molyf0ab2aqtscsyugh${lower:ten}.w.nessus.org/nessus};] that contained an invalid cookie.
+
+Regex: `a cookie header was received \[.*?\] that contained an invalid cookie\.`
+
+Solution: This regex will help you identify instances where a cookie header is received with an invalid cookie. You should then inspect the actual cookie content to determine the cause of the error.
+
+---
+
+Error Example: servlet.service() for servlet [dispatcherservlet] in context with path [] threw exception
+
+Regex: `servlet\.service\(\) for servlet \[.*?\] in context with path \[\] threw exception`
+
+Solution: This regex will help you identify instances where a servlet named "dispatcherservlet" in a specific context path throws an exception. You should investigate the servlet configuration and the exception stack trace to diagnose and resolve the issue.
+
+---
+
+Error Example: discoveryclient_rdd-async-service/p1049433.prod.cloud.fedex.com:rdd-async-service:6521 - was unable to send heartbeat!
+
+Regex: `discoveryclient_.*? - was unable to send heartbeat!`
+
+Solution: This regex will help you identify instances where a component with a name starting with "discoveryclient_" was unable to send a heartbeat. You should check the configuration and network connectivity of the component to ensure it can send heartbeats as expected.
+
+---
+
+Error Example: exception processing errorpage[errorcode=0, location=/error]
+
+Regex: `exception processing errorpage\[.*?\]`
+
+Solution: This regex will help you identify instances where an exception is raised during the processing of an error page. You should investigate the error page configuration and the specific error code to understand and address the issue.
+
+---
+please suggest a regex for the following error and a brief solution in a single line to solve the following error:
+
+
+just provide the two values in the following format:
+
+Regex: <regex>
+
+Solution: <solution>
+
+Error Example:""" + question,
+  max_tokens=244,
+  temperature=0,
+  k=0,
+  stop_sequences=["---"],
+  return_likelihoods='NONE')
+# print('Prediction: {}'.format(response.generations[0].text))
+    return response.generations[0].text
 
 def logo():
     add_logo("https://lh3.googleusercontent.com/YtXTsa-6SaaMl02-OUo8iRztlX5Thu4aCLavunIV1M5hm9y4ySTPpMjpY44fL4ayz7Se", height=300)
@@ -171,7 +233,7 @@ don't provide any other information in the message, just the regex and the solut
                         r"Regex:(.*)\n", st.session_state.chatgpt_answer
                     ).group(1)
                     solution = re.search(
-                        r"Solution: (.*)\n", st.session_state.chatgpt_answer
+                        r"Solution: (.*)", st.session_state.chatgpt_answer
                     ).group(1)
 
                     # remove the code block from the regex from the start and end if exists
@@ -196,7 +258,7 @@ don't provide any other information in the message, just the regex and the solut
                     "Error Regex (Edit if necessary):",
                     key="new_error_input",
                 )
-                new_error_solution = st.text_input(
+                new_error_solution = st.text_area(
                     "Error Solution (Provide a solution for the error):",
                     key="new_error_solution",
                 )
@@ -204,6 +266,7 @@ don't provide any other information in the message, just the regex and the solut
                 if st.button("Submit"):
                     if_submit_button_clicked(new_error_input, new_error_solution)
 
+    st.write("Please reload the page to check another error.")
 
 if __name__ == "__main__":
     main()

