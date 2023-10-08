@@ -2,10 +2,6 @@ import streamlit as st
 from pymongo import MongoClient
 import re
 from poe_api_wrapper import PoeApi
-
-
-
-
 from streamlit_extras.app_logo import add_logo
 
 def logo():
