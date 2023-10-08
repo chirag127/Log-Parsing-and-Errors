@@ -2,7 +2,10 @@ import streamlit as st
 from pymongo import MongoClient
 import re
 from ap import get_chatgpt_answer
+from streamlit_extras.app_logo import add_logo
 
+def logo():
+    add_logo("https://lh3.googleusercontent.com/YtXTsa-6SaaMl02-OUo8iRztlX5Thu4aCLavunIV1M5hm9y4ySTPpMjpY44fL4ayz7Se", height=300)
 # Access MongoDB connection details from Streamlit secrets
 db_uri = st.secrets["db_uri"]
 db_database = st.secrets["db_database"]
@@ -54,19 +57,25 @@ def if_submit_button_clicked(new_error_input, new_error_solution):
         add_new_error(new_error_input, new_error_solution)
         st.success("New error added to the database!")
 
-
 def main():
     # Streamlit app
     st.set_page_config(
         page_title="Error Message Analyzer",
-        page_icon="🚀",
+        page_icon="https://lh3.googleusercontent.com/YtXTsa-6SaaMl02-OUo8iRztlX5Thu4aCLavunIV1M5hm9y4ySTPpMjpY44fL4ayz7Se",
     )
 
     # Containers
     top = st.container()
 
+    logo()
+
+
     # User input for error message
     with top:
+
+        # Add logo
+
+        # Add title
         st.title("Error Message Analyzer")
 
         if "user_input" not in st.session_state:

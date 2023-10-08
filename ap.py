@@ -1,6 +1,6 @@
 from poe_api_wrapper import PoeApi
 
-client = PoeApi("SkSETIfxASyu3DtxwlkdnA==")
+client = PoeApi("CN6Yyu36OUZAxL1N-ytjvg==")
 
 
 def get_chatgpt_answer(question):

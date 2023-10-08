@@ -6,3 +6,6 @@ pip install -r requirements.txt
 
 pip install p2j
 p2j im.py
+
+
+streamlit run app.py
