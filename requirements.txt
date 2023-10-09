@@ -1,3 +1,5 @@
 pymongo
 streamlit
 poe_api_wrapper
+streamlit_extras
+cohere
