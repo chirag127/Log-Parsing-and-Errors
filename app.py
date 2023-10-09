@@ -1,7 +1,7 @@
 import streamlit as st
 from pymongo import MongoClient
 import re
-from streamlit_extras.app_logo import add_logo
+# from streamlit_extras.app_logo import add_logo
 from poe_api_wrapper import PoeApi
 
 
@@ -89,8 +89,6 @@ Error Example:""" + question,
 # print('Prediction: {}'.format(response.generations[0].text))
     return response.generations[0].text
 
-def logo():
-    add_logo("https://lh3.googleusercontent.com/YtXTsa-6SaaMl02-OUo8iRztlX5Thu4aCLavunIV1M5hm9y4ySTPpMjpY44fL4ayz7Se", height=300)
 # Access MongoDB connection details from Streamlit secrets
 db_uri = st.secrets["db_uri"]
 db_database = st.secrets["db_database"]
@@ -153,13 +151,11 @@ def main():
     # Containers
     top = st.container()
 
-    logo()
 
 
     # User input for error message
     with top:
 
-        # Add logo
 
         # Add title
         st.title("Error Message Analyzer")
