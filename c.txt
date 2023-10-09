@@ -7,5 +7,6 @@ pip install -r requirements.txt
 pip install p2j
 p2j im.py
 
+pip install -r requirements.txt
 
 streamlit run app.py
