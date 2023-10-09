@@ -33,6 +33,10 @@ import cohere
 co = cohere.Client('PQ50WPjjMsFSzUhZlMQaGTlS30MyRs9YkbuKfhHh') # This is your trial API key
 
 def get_cohere_answer(question):
+    """
+    This function uses the Cohere API to get an answer for the question
+    """
+
     response = co.generate(
   model='command-nightly',
   prompt="""
@@ -134,6 +138,7 @@ def add_new_error(user_input, solution):
 
 
 def if_submit_button_clicked(new_error_input, new_error_solution):
+
     if new_error_input and new_error_solution:
         add_new_error(new_error_input, new_error_solution)
         st.success("New error added to the database!")
