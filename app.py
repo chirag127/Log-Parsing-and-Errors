@@ -31,7 +31,7 @@ def get_chatgpt_answer(question):
 
     return get_cohere_answer(question)
 import cohere
-co = cohere.Client('PQ50WPjjMsFSzUhZlMQaGTlS30MyRs9YkbuKfhHh') # This is your trial API key
+co = cohere.Client('PQ50WPjjMsFSzUhZlMQaGTlS30MyRs9YkbuKfhHh')
 
 def get_cohere_answer(question):
     """
@@ -157,9 +157,21 @@ def main():
     # User input for error message
     with top:
 
+        # Add a logo image
+        logo_image = 'https://lh3.googleusercontent.com/YtXTsa-6SaaMl02-OUo8iRztlX5Thu4aCLavunIV1M5hm9y4ySTPpMjpY44fL4ayz7Se'  # Replace 'path_to_your_logo_image.png' with the actual path to your logo image
+
+        # Custom header with logo
+        header_html = f"""
+        <div style="display: flex; align-items: center; padding: 10px;">
+            <img src={logo_image} alt="Logo" width="50" height="50" style="margin-right: 10px;">
+            <h1>Error Message Analyzer</h1>
+        </div>
+        """
+
+        st.markdown(header_html, unsafe_allow_html=True)
 
         # Add title
-        st.title("Error Message Analyzer")
+        # st.title("Error Message Analyzer")
 
         if "user_input" not in st.session_state:
             st.session_state.user_input = ""
